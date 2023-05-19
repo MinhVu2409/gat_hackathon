@@ -36,14 +36,10 @@ const AppProvider = ({ children }) => {
 
   const login = async () => {
     setLoginStatus(CONNECT_STATUS.CONNECTING);
-
     const address = await Helper.connectWallet();
-
-    setTimeout(() => {
-      setWalletAddress(address);
-      Cookies.set(AppKey.walletAddress, "0x2343546547657");
-      handleNavigation();
-    }, 1000);
+    setWalletAddress(address);
+    Cookies.set(AppKey.walletAddress, address);
+    handleNavigation();
   };
 
   const logout = () => {

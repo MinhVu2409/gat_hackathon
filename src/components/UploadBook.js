@@ -29,7 +29,7 @@ const UploadBook = () => {
         Upload your book
       </Button>
 
-      <AppDialog sx={{ p: 4 }} open={isShow}>
+      <AppDialog sx={{ p: 4 }} open={isShow} onClose={() => setIsShow(false)}>
         <Stack spacing={2}>
           <Typography sx={{ fontWeight: 500, fontSize: 24, color: "#4A3AFF" }}>
             Upload your book

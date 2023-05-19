@@ -35,15 +35,13 @@ const MainLayout = ({ children }) => {
             <Box>
               <StyledLink
                 href={AppPath.MY_BOOK}
-                active={pathname === AppPath.MY_BOOK ? "primary.dark" : "black"}
+                color={pathname === AppPath.MY_BOOK ? "primary.dark" : "black"}
               >
                 My Book
               </StyledLink>
               <StyledLink
                 href={AppPath.REQUESTS}
-                active={
-                  pathname === AppPath.REQUESTS ? "primary.dark" : "black"
-                }
+                color={pathname === AppPath.REQUESTS ? "primary.dark" : "black"}
                 sx={{ marginRight: 3 }}
               >
                 Request

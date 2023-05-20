@@ -55,6 +55,9 @@ export const getAllBook = async () => {
 };
 
 export const mintPFP = async () => {
+  const phantom = new PhantomWalletAdapter();
+  //await phantom.disconnect();
+  await phantom.connect(); 
   const rpcUrl = clusterApiUrl('devnet');
   const connection = new Connection(rpcUrl,"confirmed");
   let formData = new FormData();
@@ -86,12 +89,18 @@ export const mintPFP = async () => {
     Buffer.from(response.data.result.encoded_transaction, 'base64')
   );
   console.log(transaction)
-  // transaction.sign(adminKeyPair);
-  // const confirmTransaction = await connection.sendRawTransaction(
-  //   signedTx.serialize()
-  // );
+  transaction.partialSign(adminKeyPair);
+  const confirmTransaction = await connection.sendRawTransaction(
+    transaction.serialize()
+  );
 
-  // const checks = await connection.confirmTransaction({signature:confirmTransaction},'finalised');
+  const check = await connection.confirmTransaction({signature:confirmTransaction},'finalised');
+
+  console.log(check);
+  if (check.value.err) {
+    return false;
+  }
+
   return true;
 };
 

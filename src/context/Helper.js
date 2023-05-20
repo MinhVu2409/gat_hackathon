@@ -36,7 +36,11 @@ export const hasPFPNft = async () => {
     return false;
   }
 
-  const pfp = nfts.filter((nft) => nft.mint === collectionMint);
+  const pfp = nfts
+    .filter(
+      (nft) => nft.collection.address === collectionMint
+        && nft.collection.verified === true
+    );
   console.log(pfp);
 
   if (!_.isEmpty(pfp)) {

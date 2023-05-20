@@ -6,6 +6,6 @@ export const adminKeyPair = Keypair.fromSecretKey(secretKey);
 
 export const apiKey = 'YvFHROCKKEdZmqit';
 
-export const collectionMint = 'GD9WaKrsYTbXwrPAdxjHYagpipVdwqzAvqBk89mK5pY';
+export const collectionMint = 'Bfu5N8eKvzFNnFvVcxjPEE16gnwbws6Crnj2WeRAW8nC';
 
-export const candyMachineId = '433Z4UGw27hJBbWH7PxrMTNipFq763gEQ7whY7rredtg';
+export const candyMachineId = 'Cj5h723F7JFoekJGGbpCabcP754bTNcdvQsrJUTeDycc';

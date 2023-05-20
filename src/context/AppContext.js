@@ -3,6 +3,7 @@ import React, { useState, createContext, useContext, useEffect } from "react";
 import { AppPath } from "../components/MainLayout";
 import Cookies from "js-cookie";
 import * as Helper from "./Helper";
+import { adminKeyPair } from "constant";
 
 /* ------------- Initial State ------------- */
 export const CONNECT_STATUS = {
@@ -73,7 +74,6 @@ const AppProvider = ({ children }) => {
 
     return Boolean(bookNft);
   };
-
   const getMyBook = async () => {
     const list = await Helper.getAllBook();
     setMyBook(list);
@@ -91,19 +91,13 @@ const AppProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    let retryCount = 0;
-    const interval = setInterval(() => {
-      if (retryCount >= 5) clearInterval(interval);
       const cookieAddress = Cookies.get(AppKey.walletAddress);
 
       if (cookieAddress) {
-        clearInterval(interval);
         setWalletAddress(cookieAddress);
         getMyBook();
         handleNavigation();
       }
-      retryCount++;
-    }, 500);
   }, []);
 
   return (

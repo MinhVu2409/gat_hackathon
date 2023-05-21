@@ -51,6 +51,7 @@ const AppProvider = ({ children }) => {
 
   const mintPFP = async () => {
     const isResult = await Helper.mintPFP();
+    console.log("isResult",isResult);
 
     if (isResult) {
       alert("mintPFP success");

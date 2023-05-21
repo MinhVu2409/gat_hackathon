@@ -29,11 +29,6 @@ const MyBook = () => {
     }
   }, [myBook, isFetching]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsFetching(false);
-    }, 1000);
-  }, []);
 
   const isEmpty = !isFetching && bookList.length === 0;
 

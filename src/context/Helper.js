@@ -1,6 +1,6 @@
 import {  Account, clusterApiUrl, Connection,Keypair,PublicKey, Transaction } from "@solana/web3.js";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
-import { adminKeyPair, apiKey, candyMachineId, collectionMint } from "constant";
+import { adminKeyPair, apiKey, bookCollectionMint, candyMachineId, collectionMint } from "constant";
 import Cookies from "js-cookie";
 import { AppKey } from "./AppContext";
 import axios from "axios";
@@ -31,7 +31,7 @@ export const hasPFPNft = async () => {
     });
   
     const nfts = response.data.result.nfts;
-    console.log(nfts);
+    
   
     if (_.isEmpty(nfts)) {
       return false;
@@ -42,7 +42,6 @@ export const hasPFPNft = async () => {
         (nft) => nft.collection.address === collectionMint
           && nft.collection.verified === true
       );
-    console.log(pfp);
   
     if (!_.isEmpty(pfp)) {
       return true;
@@ -57,57 +56,32 @@ export const hasPFPNft = async () => {
 };
 
 export const getAllBook = async () => {
-  return DEFAULT_BOOK;
+    const response = await axios({
+      // Endpoint to send files
+      url: `https://api.shyft.to/sol/v2/nft/read_all?network=devnet&address=${Cookies.get(AppKey.walletAddress)}`,
+      method: "GET",
+      headers: {
+        "x-api-key": apiKey,
+        Accept: "*/*",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+    const nfts = response.data.result.nfts;
+    console.log("nfts",nfts);
+    const nftMyBook = nfts.filter(
+      (nft) => nft.symbol === "GATBOOK"
+    );
+    return nftMyBook;
+  
 };
 
 export const mintPFP = async () => {
-  try{
+ 
     const phantom = new PhantomWalletAdapter();
   //await phantom.disconnect();
   await phantom.connect(); 
   const rpcUrl = clusterApiUrl('devnet');
   const connection = new Connection(rpcUrl,"confirmed");
-    let formDataCreateCandyMachine = new FormData();
-    formDataCreateCandyMachine.append("network", "devnet");
-    formDataCreateCandyMachine.append("wallet", Cookies.get(AppKey.walletAddress));
-    formDataCreateCandyMachine.append("symbol", "TSTSWG2");
-    formDataCreateCandyMachine.append("max_supply", 0);
-    formDataCreateCandyMachine.append("royalty", 333);
-    formDataCreateCandyMachine.append("collection",collectionMint );
-    formDataCreateCandyMachine.append("items_available", 3);
-    formDataCreateCandyMachine.append("amount", 0.4);
-    
-    const responeCreate = await axios({
-      url: "https://api.shyft.to/sol/v1/candy_machine/create",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        Accept: "*/*",
-        // "Access-Control-Allow-Origin": "*",
-      },
-      data : formDataCreateCandyMachine,
-    })
-
-    console.log("responeCreate",responeCreate.data.result.candy_machine);
-    let formDataInsert = new FormData();
-    formDataInsert.append("network","devnet")
-    formDataInsert.append("wallet",Cookies.get(AppKey.walletAddress))
-    formDataInsert.append("candy_machine",responeCreate.data.result.candy_machine)
-
-    const responseInsert = await axios({
-      url: "https://api.shyft.to/sol/v1/candy_machine/insert",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        Accept: "*/*",
-        // "Access-Control-Allow-Origin": "*",
-      },
-      data : formDataInsert,
-    })
-
-    console.log("responseInsert",responseInsert);
 
   let formData = new FormData();
 	formData.append("network", "devnet");
@@ -135,34 +109,89 @@ export const mintPFP = async () => {
   if (response.data.success !== true) {
     return false;
   }
-
+  
   const transaction = Transaction.from(
     Buffer.from(response.data.result.encoded_transaction, 'base64')
   );
+  ;
   transaction.partialSign(adminKeyPair);
   const confirmTransaction = await connection.sendRawTransaction(
     transaction.serialize()
   );
-    console.log("confirmTransaction",confirmTransaction);
   const check = await connection.confirmTransaction({signature:confirmTransaction},'finalised');
 
-  console.log(check);
   if (check.value.err) {
     return false;
   }
 
   return true;
-  }catch(err){
-    console.log(err);
-  }
+ 
 };
 
 export const mintBookSelf = async (book) => {
+  const phantom = new PhantomWalletAdapter();
+  //await phantom.disconnect();
+  await phantom.connect(); 
+  const rpcUrl = clusterApiUrl('devnet');
+  const connection = new Connection(rpcUrl,"confirmed");
+
+  let formData = new FormData();
+	formData.append("network", "devnet");
+	formData.append("creator_wallet", Cookies.get(AppKey.walletAddress));
+  formData.append("name", book.title);
+  formData.append("symbol", "GATBOOK");
+	formData.append("description", "BOOK NFT");
+  formData.append("attributes", JSON.stringify([
+    {
+      trait_type: "title",
+      value: book?.title,
+    },
+    {
+      trait_type: "author",
+      value: book?.author
+    }
+  ]));
+  formData.append("external_url", "https://app.gatbook.org/");
+  formData.append("max_supply", "0");
+  formData.append("royalty", "0");
+  formData.append("image",  "img-empty.png");
+  formData.append("fee_payer", adminKeyPair.publicKey.toString());
+
+	const response = await axios({
+		// Endpoint to send files
+		url: "https://api.shyft.to/sol/v2/nft/create",
+		method: "POST",
+		headers: {
+			"Content-Type": "application/x-www-form-urlencoded",
+			"x-api-key": apiKey,
+			Accept: "*/*",
+			// "Access-Control-Allow-Origin": "*",
+		},
+		// Attaching the form data
+		data: formData,
+	});
+
+  
+  if (response.data.success !== true) {
+    return null;
+  }
+  
+  const transaction = Transaction.from(
+    Buffer.from(response.data.result.encoded_transaction, 'base64')
+  );
+  ;
+  transaction.partialSign(adminKeyPair);
+
+  const signedTx = await phantom.signTransaction(transaction);
+  const confirmTransaction = await connection.sendRawTransaction(
+    signedTx.serialize()
+  );
+  const check = await connection.confirmTransaction({signature:confirmTransaction},'finalised');
+  if (check.value.err ) {
+    return null;
+  }
   return book;
 };
 
-export const DEFAULT_BOOK = Array.from(Array(10).keys()).map((index) => ({
-  title: "Book - " + (index + 1),
-  author: "Author - " + index + 1,
-  ownerAddress: "0x23355234333432423",
-}));
+
+export const DEFAULT_BOOK=[];

@@ -3,7 +3,6 @@ import React, { useState, createContext, useContext, useEffect } from "react";
 import { AppPath } from "../components/MainLayout";
 import Cookies from "js-cookie";
 import * as Helper from "./Helper";
-import { adminKeyPair } from "constant";
 
 /* ------------- Initial State ------------- */
 export const CONNECT_STATUS = {
@@ -60,7 +59,7 @@ const AppProvider = ({ children }) => {
       alert("mintPFP error");
     }
 
-    return isResult;
+    return Boolean(isResult);
   };
 
   const mintBook = async (book) => {
@@ -71,7 +70,6 @@ const AppProvider = ({ children }) => {
     } else {
       alert("mintBook error");
     }
-
     return Boolean(bookNft);
   };
   const getMyBook = async () => {

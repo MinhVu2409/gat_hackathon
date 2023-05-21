@@ -51,7 +51,7 @@ const MyBookItem = ({ book = {}, onSwap }) => {
           color: "#1E1E1E",
         }}
       >
-        {book.title}
+        {book.attributes.title}
       </Typography>
       <Typography
         sx={{
@@ -61,7 +61,7 @@ const MyBookItem = ({ book = {}, onSwap }) => {
           marginBottom: 4,
         }}
       >
-        {book.author}
+        {book.attributes.author}
       </Typography>
     </Box>
   );

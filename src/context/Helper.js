@@ -90,8 +90,6 @@ export const mintPFP = async () => {
   formData.append("candy_machine", candyMachineId);
 	formData.append("fee_payer", adminKeyPair.publicKey.toString());
 
-  
-
 	const response = await axios({
 		// Endpoint to send files
 		url: "https://api.shyft.to/sol/v1/candy_machine/mint",
@@ -123,9 +121,7 @@ export const mintPFP = async () => {
   if (check.value.err) {
     return false;
   }
-
   return true;
- 
 };
 
 export const mintBookSelf = async (book) => {

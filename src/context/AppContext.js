@@ -59,7 +59,7 @@ const AppProvider = ({ children }) => {
       alert("mintPFP error");
     }
 
-    return Boolean(isResult);
+    return isResult;
   };
 
   const mintBook = async (book) => {

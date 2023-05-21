@@ -56,11 +56,12 @@ const AppProvider = ({ children }) => {
     if (isResult) {
       alert("mintPFP success");
       setLoginStatus(CONNECT_STATUS.CONNECTED);
+      return true;
     } else {
       alert("mintPFP error");
+      return false;
     }
 
-    return isResult;
   };
 
   const mintBook = async (book) => {

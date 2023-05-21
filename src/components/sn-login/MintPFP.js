@@ -13,7 +13,9 @@ const MintPFP = () => {
 
   const handleMintPFP = () => {
     const isResult = mintPFP();
-    setIsSuccessMint(isResult);
+    if(isResult){
+      setIsSuccessMint(isResult);
+    }
   };
 
   return (
